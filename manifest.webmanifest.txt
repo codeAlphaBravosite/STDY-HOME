@@ -1,12 +1,12 @@
 {
-  "name": "Syllabook",
-  "short_name": "Syllabook",
-  "description": "Syllabook",
+  "name": "Study OS",
+  "short_name": "Study OS",
+  "description": "Study OS",
   "start_url": "./index.html",
   "scope": ".",
   "display": "standalone",
-  "background_color": "#f8f9fc",
-  "theme_color": "#4f46e5",
+  "background_color": "#f1f5f9",
+  "theme_color": "#0f172a",
   "orientation": "natural",
   "categories": ["productivity", "utilities"],
   "icons": [

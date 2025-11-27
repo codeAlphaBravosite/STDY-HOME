@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="./icon-192x192.png" type="image/png">
+    <link rel="shortcut icon" href="./icon-192x192.png" type="image/png">
+    <link rel="apple-touch-icon" href="./icon-192x192.png">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            --bg-app: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            
+            --font-stack: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-stack); }
+        body { background: var(--bg-app); color: var(--text-main); padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 1.5rem; }
+
+        /* --- SECTION HEADERS --- */
+        .section-block { margin-bottom: 35px; }
+
+        .section-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 15px; padding: 0 4px;
+        }
+        
+        .section-title { 
+            font-size: 1.1rem; font-weight: 800; color: var(--text-main); 
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+            letter-spacing: -0.5px;
+        }
+
+        .header-line {
+            flex-grow: 1; height: 2px; border-radius: 2px;
+            background: linear-gradient(90deg, #e2e8f0 0%, transparent 100%);
+        }
+
+        .section-action {
+            font-size: 0.8rem; font-weight: 700; color: var(--primary);
+            background: none; border: none; cursor: pointer; white-space: nowrap;
+        }
+
+        /* --- DASHBOARD GRID --- */
+        .dashboard-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        }
+
+        .stat-card {
+            background: var(--bg-card); padding: 1.25rem;
+            border-radius: var(--radius); box-shadow: var(--shadow);
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
+            text-align: center;
+            position: relative; overflow: hidden;
+        }
+
+        /* --- FIXED COUNTDOWN CARD --- */
+        .card-highlight {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white; 
+            min-height: 150px; /* Give it room */
+            justify-content: space-between; /* Space out content vertically */
+            padding-top: 35px; /* Room for settings icon */
+        }
+        
+        .card-highlight .settings-btn {
+            position: absolute; top: 15px; right: 15px;
+            color: rgba(255,255,255,0.2); font-size: 1.2rem; cursor: pointer;
+            z-index: 10;
+        }
+
+        .event-label {
+            font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.9);
+            letter-spacing: 0.5px; 
+            text-transform: uppercase;
+            max-width: 90%;
+            line-height: 1.2;
+            margin-bottom: 5px;
+        }
+
+        .countdown-wrapper {
+            display: flex; align-items: baseline; justify-content: center; gap: 8px;
+            flex-grow: 1; /* Allow this to take up space */
+        }
+
+        .count-number {
+            font-size: 4rem; font-weight: 900; line-height: 1;
+            letter-spacing: -2px;
+            background: -webkit-linear-gradient(#fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .count-text-styled {
+            font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.5);
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        /* Sub Cards */
+        .stat-val { font-size: 1.8rem; font-weight: 800; color: var(--text-main); line-height: 1.1; }
+        .stat-sub { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; }
+
+        /* --- CALENDAR --- */
+        .calendar-strip {
+            display: flex; justify-content: space-between;
+            background: var(--bg-card); padding: 12px;
+            border-radius: var(--radius); box-shadow: var(--shadow);
+        }
+        .cal-day {
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 0.7rem; color: var(--text-muted); padding: 8px 10px;
+            border-radius: 10px; font-weight: 600;
+        }
+        .cal-day.active {
+            background: var(--primary); color: white;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+        }
+        .cal-num { font-size: 1rem; font-weight: 800; margin-top: 2px; }
+
+        /* --- DAILY OPERATION CARDS --- */
+        .routine-list { display: flex; flex-direction: column; gap: 16px; }
+
+        .op-card {
+            background: var(--bg-card); border-radius: var(--radius);
+            padding: 1.5rem 1rem; box-shadow: var(--shadow);
+            position: relative; text-align: center; border: 1px solid #f8fafc;
+        }
+
+        .time-badge {
+            position: absolute; top: 12px; left: 12px;
+            background: #f1f5f9; color: var(--text-muted);
+            font-size: 0.7rem; font-weight: 700; padding: 4px 8px;
+            border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .subject-title {
+            font-size: 1.5rem; font-weight: 900; color: var(--text-main);
+            margin-top: 15px; margin-bottom: 6px; letter-spacing: -1px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.04);
+        }
+
+        .task-desc {
+            font-size: 1rem; color: var(--text-muted); font-weight: 500;
+            margin-bottom: 24px; line-height: 1.4;
+        }
+
+        .card-actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            max-width: 320px; margin: 0 auto;
+        }
+
+        .btn-op {
+            padding: 12px; border: none; border-radius: 12px;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            transition: 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-op:active { transform: scale(0.96); }
+        .btn-done { background: var(--text-main); color: white; }
+        .btn-miss { background: white; border: 2px solid var(--danger-bg); color: var(--danger); }
+
+        .state-box {
+            padding: 12px; border-radius: 12px; font-weight: 800; 
+            text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .state-done { background: var(--success-bg); color: var(--success); }
+        .state-missed { background: var(--danger-bg); color: var(--danger); }
+
+        /* --- BACKLOG & DEADLINE CARDS (Fixed) --- */
+        .backlog-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .goal-card-enhanced {
+            background: var(--bg-card); 
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 16px;
+            display: flex; align-items: center; gap: 15px;
+            position: relative; overflow: hidden;
+            border-left: 5px solid #cbd5e1;
+            transition: transform 0.2s;
+        }
+
+        .goal-card-enhanced.status-overdue { border-left-color: var(--danger); background: #fff5f5; }
+        .goal-card-enhanced.status-today { border-left-color: var(--warning); background: #fffdf5; }
+        .goal-card-enhanced.status-normal { border-left-color: var(--primary); }
+
+        .goal-check-circle {
+            width: 28px; height: 28px; border-radius: 50%; 
+            border: 2px solid #cbd5e1;
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; flex-shrink: 0; color: white; 
+            transition: 0.2s; background: white;
+        }
+        
+        .goal-card-enhanced:hover .goal-check-circle { border-color: var(--primary); }
+        .goal-card-enhanced.completed .goal-check-circle {
+            background: var(--success); border-color: var(--success);
+        }
+        .goal-card-enhanced.completed .goal-content { opacity: 0.5; text-decoration: line-through; }
+
+        .goal-content { flex-grow: 1; overflow: hidden; }
+        .goal-title { font-weight: 700; color: var(--text-main); font-size: 1rem; margin-bottom: 6px; }
+        
+        /* New Meta Row for Clean Date Display */
+        .meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        
+        .deadline-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.65rem; font-weight: 800; padding: 2px 6px;
+            border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-overdue { background: var(--danger); color: white; }
+        .badge-today { background: var(--warning); color: #78350f; }
+        .badge-future { background: #e2e8f0; color: var(--text-muted); }
+
+        .date-text {
+            font-size: 0.75rem; color: var(--text-muted); font-weight: 500;
+        }
+
+        .action-group {
+            display: flex; gap: 8px;
+        }
+        .btn-icon-mini { 
+            background: none; border: none; color: #cbd5e1; 
+            cursor: pointer; font-size: 0.9rem; padding: 4px;
+            transition: color 0.2s;
+        }
+        .btn-icon-mini:hover { color: var(--primary); }
+        .btn-del-mini:hover { color: var(--danger); }
+        
+        /* --- MOTIVATION BOXES --- */
+        .motivation-box {
+            text-align: center; padding: 2.5rem 1rem;
+            background: linear-gradient(to bottom, #f8fafc, white);
+            border-radius: var(--radius); border: 2px dashed #e2e8f0;
+        }
+        .fire-icon { font-size: 2rem; color: #f59e0b; margin-bottom: 10px; display: block;}
+        .fire-text { font-size: 0.95rem; font-weight: 800; color: var(--text-main); letter-spacing: 0.5px; text-transform: uppercase; }
+
+        /* --- FAB & MODALS --- */
+        .fab {
+            position: fixed; bottom: 30px; right: 25px;
+            background: var(--primary); color: white;
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            cursor: pointer; border: none; transition: transform 0.2s; z-index: 100;
+        }
+        .fab:active { transform: scale(0.9); }
+
+        .modal-wrap {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
+            z-index: 200; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-card {
+            background: white; width: 100%; max-width: 400px;
+            padding: 25px; border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            animation: slideUp 0.3s ease;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+        .form-input { 
+            width: 100%; padding: 14px; border: 2px solid #e2e8f0; 
+            border-radius: 12px; font-size: 1rem; outline: none; font-weight: 500;
+        }
+        .form-input:focus { border-color: var(--primary); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        
+        .btn-modal-sec { background: #f1f5f9; color: var(--text-main); padding: 12px 24px; border-radius: 10px; border: none; font-weight: 600; }
+        .btn-modal-pri { background: var(--text-main); color: white; padding: 12px 24px; border-radius: 10px; border: none; font-weight: 600; }
+
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- 1. STATS SECTION -->
+    <div class="section-block">
+        <div class="dashboard-grid">
+            <!-- MAIN COUNTDOWN -->
+            <div class="stat-card card-highlight">
+                <i class="fas fa-cog settings-btn" onclick="openConfigModal()"></i>
+                
+                <div class="event-label" id="eventNameDisplay">CUET EXAM</div>
+                
+                <div class="countdown-wrapper">
+                    <span class="count-number" id="daysCount">--</span>
+                    <span class="count-text-styled">DAYS LEFT</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-val" id="weeksCount">--</div>
+                <div class="stat-sub">Weeks Left</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="monthEndCount">--</div>
+                <div class="stat-sub">Days in Month</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CALENDAR SECTION -->
+    <div class="section-block">
+        <div class="calendar-strip" id="calendarStrip"></div>
+    </div>
+
+    <!-- 3. OPERATIONS SECTION -->
+    <div class="section-block">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-crosshairs" style="color:var(--danger)"></i> 
+                Daily Operations
+            </div>
+            <div class="header-line"></div>
+            <button class="section-action" onclick="openScheduleModal()">Edit Grid</button>
+        </div>
+
+        <div class="routine-list" id="routineContainer"></div>
+    </div>
+
+    <!-- 4. BACKLOG SECTION -->
+    <div class="section-block">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-layer-group" style="color:var(--text-muted)"></i>
+                Backlog
+            </div>
+            <div class="header-line"></div>
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted)" id="backlogCount">0 Items</span>
+        </div>
+
+        <div class="backlog-list" id="goalsContainer"></div>
+    </div>
+
+</div>
+
+<!-- ADD FAB -->
+<button class="fab" onclick="openGoalModal()"><i class="fas fa-plus"></i></button>
+
+<!-- CONFIG MODAL -->
+<div class="modal-wrap" id="configModal">
+    <div class="modal-card">
+        <h3>App Settings</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Target Configuration</p>
+        <div class="form-group">
+            <label class="form-label">Event Name</label>
+            <input type="text" id="confEventName" class="form-input" placeholder="e.g. CUET EXAM">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Target Date</label>
+            <input type="date" id="confEventDate" class="form-input">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-sec" onclick="closeModal('configModal')">Cancel</button>
+            <button class="btn-modal-pri" onclick="saveConfig()">Save Settings</button>
+        </div>
+    </div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="modal-wrap" id="scheduleModal">
+    <div class="modal-card">
+        <h3>Edit Daily Grid</h3>
+        <div class="form-group" style="margin-top:15px">
+            <label class="form-label">Day</label>
+            <select id="editDaySelect" class="form-input" onchange="loadDaySchedule()">
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+                <option value="0">Sunday</option>
+            </select>
+        </div>
+        <div style="max-height: 40vh; overflow-y:auto;">
+            <div class="form-group">
+                <label class="form-label">Morning</label>
+                <input type="text" id="slot1Sub" class="form-input" placeholder="Subject">
+                <input type="text" id="slot1Task" class="form-input" placeholder="Task" style="margin-top:5px">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Free Time</label>
+                <input type="text" id="slot2Sub" class="form-input" placeholder="Subject">
+                <input type="text" id="slot2Task" class="form-input" placeholder="Task" style="margin-top:5px">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Night</label>
+                <input type="text" id="slot3Sub" class="form-input" placeholder="Subject">
+                <input type="text" id="slot3Task" class="form-input" placeholder="Task" style="margin-top:5px">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-sec" onclick="closeModal('scheduleModal')">Cancel</button>
+            <button class="btn-modal-pri" onclick="saveSchedule()">Save Grid</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADD/EDIT GOAL MODAL -->
+<div class="modal-wrap" id="goalModal">
+    <div class="modal-card">
+        <h3 id="modalTitle">Add Backlog Task</h3>
+        <input type="hidden" id="editGoalId"> <!-- Hidden ID for Editing -->
+        
+        <div class="form-group" style="margin-top:15px">
+            <label class="form-label">Task Description</label>
+            <input type="text" id="newGoalTitle" class="form-input" placeholder="What did you miss?">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Deadline (Optional)</label>
+            <input type="date" id="newGoalDate" class="form-input">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal-sec" onclick="closeModal('goalModal')">Cancel</button>
+            <button class="btn-modal-pri" onclick="saveGoal()">Save Item</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* --- DATA & CONFIG --- */
+    const defaultSchedule = {
+        1: { day: "Monday", slots: [ {time:"Morning", sub:"PHYSICS", task:"Theory & One-Shots"}, {time:"Free Time", sub:"ENGLISH", task:"Vocab & Idioms"}, {time:"Night", sub:"GAT", task:"Quant Practice"} ]},
+        2: { day: "Tuesday", slots: [ {time:"Morning", sub:"PHYSICS", task:"NCERT & Problems"}, {time:"Free Time", sub:"ENGLISH", task:"Reading Comp"}, {time:"Night", sub:"GAT", task:"Reasoning"} ]},
+        3: { day: "Wednesday", slots: [ {time:"Morning", sub:"CHEMISTRY", task:"Inorganic Reading"}, {time:"Free Time", sub:"GAT", task:"General Awareness"}, {time:"Night", sub:"ENGLISH", task:"Mock Test"} ]},
+        4: { day: "Thursday", slots: [ {time:"Morning", sub:"CHEMISTRY", task:"Physical/Formulas"}, {time:"Free Time", sub:"GAT", task:"General Awareness"}, {time:"Night", sub:"REVISION", task:"Mistake Notebook"} ]},
+        5: { day: "Friday", slots: [ {time:"Morning", sub:"MATH", task:"Class 12 Concepts"}, {time:"Free Time", sub:"REVISION", task:"Formula Sheets"}, {time:"Night", sub:"GAT", task:"Sectional Mock"} ]},
+        6: { day: "Saturday", slots: [ {time:"Morning", sub:"MATH", task:"Problem Solving"}, {time:"Free Time", sub:"REVISION", task:"Weekly Review"}, {time:"Night", sub:"PLANNING", task:"Prep for Sunday"} ]},
+        0: { day: "Sunday", slots: [ {time:"Morning", sub:"MATH", task:"Calculus Deep Dive"}, {time:"Afternoon", sub:"BACKLOG", task:"Clear Missed Tasks"}, {time:"Evening", sub:"MOCK TEST", task:"Full Mock + Analysis"} ]}
+    };
+
+    let appData = {
+        config: { eventName: "CUET EXAM", eventDate: "2025-05-15" },
+        schedule: JSON.parse(JSON.stringify(defaultSchedule)),
+        goals: [], // {id, title, done, deadline}
+        dailyLog: {}, 
+        completionText: {}
+    };
+
+    const HYPE_PHRASES = ["DOMINATED", "CRUSHED IT", "SECURED", "OBLITERATED", "OWNED", "EZ WINS"];
+
+    /* --- INITIALIZATION --- */
+    function init() {
+        const stored = localStorage.getItem('cuetCommandFinal');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            appData = { ...appData, ...parsed };
+            if(!appData.schedule) appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
+            if(!appData.config) appData.config = { eventName: "CUET EXAM", eventDate: "2025-05-15" };
+        }
+        autoCleanBacklog();
+        renderDashboard();
+        renderCalendar();
+        renderRoutine();
+        renderGoals();
+    }
+
+    function save() { localStorage.setItem('cuetCommandFinal', JSON.stringify(appData)); }
+
+    function autoCleanBacklog() {
+        if(!appData.goals) return;
+        const originalCount = appData.goals.length;
+        appData.goals = appData.goals.filter(g => !g.done);
+        if(appData.goals.length !== originalCount) save();
+    }
+
+    /* --- DASHBOARD LOGIC --- */
+    function renderDashboard() {
+        const now = new Date();
+        const target = new Date(appData.config.eventDate);
+        const diffTime = target - now;
+        let daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (daysLeft < 0) daysLeft = 0;
+
+        document.getElementById('daysCount').innerText = daysLeft;
+        document.getElementById('eventNameDisplay').innerText = appData.config.eventName.toUpperCase();
+
+        const weeks = Math.floor(daysLeft / 7);
+        document.getElementById('weeksCount').innerText = weeks;
+
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        document.getElementById('monthEndCount').innerText = endOfMonth.getDate() - now.getDate();
+    }
+
+    /* --- CALENDAR --- */
+    function renderCalendar() {
+        const container = document.getElementById('calendarStrip');
+        container.innerHTML = '';
+        const now = new Date();
+        const currentDay = now.getDay(); 
+        const dayOffset = currentDay === 0 ? 6 : currentDay - 1;
+        const mondayDate = new Date(now);
+        mondayDate.setDate(now.getDate() - dayOffset);
+        const daysMap = ["S", "M", "T", "W", "T", "F", "S"];
+
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(mondayDate);
+            d.setDate(mondayDate.getDate() + i);
+            const el = document.createElement('div');
+            el.className = `cal-day ${d.toDateString() === now.toDateString() ? 'active' : ''}`;
+            el.innerHTML = `<span>${daysMap[d.getDay()]}</span><span class="cal-num">${d.getDate()}</span>`;
+            container.appendChild(el);
+        }
+    }
+
+    /* --- ROUTINE LOGIC --- */
+    function renderRoutine() {
+        const container = document.getElementById('routineContainer');
+        container.innerHTML = '';
+        const todayIdx = new Date().getDay();
+        const plan = appData.schedule[todayIdx];
+        const dateKey = new Date().toISOString().split('T')[0];
+
+        let hasTasks = false;
+        if (plan && plan.slots.length > 0) {
+             hasTasks = plan.slots.some(s => s.sub || s.task);
+        }
+
+        if(!hasTasks) {
+            container.innerHTML = `
+                <div class="motivation-box">
+                    <i class="fas fa-bolt fire-icon"></i>
+                    <div class="fire-text">TACTICAL PAUSE. RECHARGE FOR WAR.</div>
+                </div>`;
+            return;
+        }
+
+        plan.slots.forEach((slot, idx) => {
+            if(!slot.sub && !slot.task) return;
+            const taskKey = `${dateKey}-${idx}`;
+            const status = appData.dailyLog[taskKey];
+            const isDone = status === true;
+            const isMissed = status === 'missed';
+
+            let hypeText = "DONE";
+            if(isDone) {
+                if(!appData.completionText[taskKey]) {
+                    appData.completionText[taskKey] = HYPE_PHRASES[Math.floor(Math.random() * HYPE_PHRASES.length)];
+                    save();
+                }
+                hypeText = appData.completionText[taskKey];
+            }
+
+            const div = document.createElement('div');
+            div.className = `op-card`;
+            
+            let actionHtml = '';
+            if (isDone) {
+                actionHtml = `<div class="state-box state-done" onclick="undoRoutine('${taskKey}')"><i class="fas fa-check-circle"></i> ${hypeText}</div>`;
+            } else if (isMissed) {
+                actionHtml = `<div class="state-box state-missed">FAILED</div>`;
+            } else {
+                actionHtml = `
+                    <div class="card-actions">
+                        <button class="btn-op btn-done" onclick="markRoutine('${taskKey}', true)"><i class="fas fa-check"></i> DONE</button>
+                        <button class="btn-op btn-miss" onclick="markMissed('${taskKey}', '${slot.sub}: ${slot.task}')"><i class="fas fa-times"></i> MISS</button>
+                    </div>`;
+            }
+
+            div.innerHTML = `
+                <div class="time-badge">${slot.time}</div>
+                <div class="subject-title">${slot.sub}</div>
+                <div class="task-desc">${slot.task}</div>
+                ${actionHtml}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function markRoutine(key, status) { appData.dailyLog[key] = status; save(); renderRoutine(); }
+    function undoRoutine(key) { if(confirm("Undo?")) { delete appData.dailyLog[key]; delete appData.completionText[key]; save(); renderRoutine(); } }
+    function markMissed(key, title) { appData.dailyLog[key] = 'missed'; addGoalInternal(title, null); save(); renderRoutine(); }
+
+    /* --- BACKLOG LOGIC --- */
+    function renderGoals() {
+        const container = document.getElementById('goalsContainer');
+        container.innerHTML = '';
+        const list = appData.goals || [];
+        document.getElementById('backlogCount').innerText = `${list.length} Items`;
+
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="motivation-box" style="border-color:var(--success)">
+                    <i class="fas fa-medal fire-icon" style="color:var(--success)"></i>
+                    <div class="fire-text" style="color:var(--success)">NO LOOSE ENDS. TOTAL DOMINATION.</div>
+                </div>`;
+            return;
+        }
+
+        const now = new Date();
+        now.setHours(0,0,0,0);
+
+        // --- PRECISE SORTING LOGIC START ---
+        list.sort((a,b) => {
+            // Check existence of deadline
+            const hasDeadA = a.deadline && a.deadline.trim() !== "";
+            const hasDeadB = b.deadline && b.deadline.trim() !== "";
+
+            // 1. Items with deadlines come before items without
+            if (hasDeadA && !hasDeadB) return -1;
+            if (!hasDeadA && hasDeadB) return 1;
+
+            // 2. If both have deadlines, sort by Earliest Date first
+            if (hasDeadA && hasDeadB) {
+                const dateA = new Date(a.deadline).getTime();
+                const dateB = new Date(b.deadline).getTime();
+                if (dateA !== dateB) return dateA - dateB;
+            }
+
+            // 3. Secondary Sort: Creation Time (Oldest First / FIFO)
+            // Smaller ID = Created earlier (since ID is Date.now())
+            return a.id - b.id;
+        });
+        // --- PRECISE SORTING LOGIC END ---
+
+        list.forEach(g => {
+            let badgeHtml = '';
+            let dateTextHtml = '';
+            let statusClass = 'status-normal';
+
+            if(g.deadline) {
+                const due = new Date(g.deadline);
+                due.setHours(0,0,0,0);
+                const diff = (due - now) / (1000 * 60 * 60 * 24);
+                
+                // Format Date: "Mon, 15 Mar"
+                const dateOptions = { month: 'short', day: 'numeric' };
+                const dateStr = due.toLocaleDateString('en-US', dateOptions);
+
+                if (diff < 0) {
+                    badgeHtml = `<div class="deadline-badge badge-overdue"><i class="fas fa-exclamation-circle"></i> OVERDUE</div>`;
+                    statusClass = 'status-overdue';
+                    dateTextHtml = `<span class="date-text" style="color:var(--danger)">Due ${dateStr}</span>`;
+                } else if (diff === 0) {
+                    badgeHtml = `<div class="deadline-badge badge-today"><i class="fas fa-clock"></i> TODAY</div>`;
+                    statusClass = 'status-today';
+                    dateTextHtml = `<span class="date-text" style="color:var(--warning)">Due Today</span>`;
+                } else {
+                    badgeHtml = `<div class="deadline-badge badge-future">${Math.ceil(diff)} Days Left</div>`;
+                    dateTextHtml = `<span class="date-text">Due ${dateStr}</span>`;
+                }
+            }
+
+            const div = document.createElement('div');
+            div.className = `goal-card-enhanced ${g.done ? 'completed' : ''} ${statusClass}`;
+            div.innerHTML = `
+                <div class="goal-check-circle" onclick="toggleGoal(${g.id})"><i class="fas fa-check" style="font-size:0.8rem"></i></div>
+                <div class="goal-content">
+                    <div class="goal-title">${g.title}</div>
+                    <div class="meta-row">
+                        ${badgeHtml}
+                        ${dateTextHtml}
+                    </div>
+                </div>
+                <div class="action-group">
+                    <button class="btn-icon-mini" onclick="editGoal(${g.id})"><i class="fas fa-pencil"></i></button>
+                    <button class="btn-icon-mini btn-del-mini" onclick="deleteGoal(${g.id})"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function addGoalInternal(title, dateStr, existingId = null) { 
+        if(existingId) {
+            // Edit existing
+            const g = appData.goals.find(x => x.id === existingId);
+            if(g) {
+                g.title = title;
+                g.deadline = dateStr || null;
+            }
+        } else {
+            // Add new
+            appData.goals.push({ 
+                id: Date.now(), 
+                title: title, 
+                done: false,
+                deadline: dateStr || null 
+            }); 
+        }
+        save(); 
+        renderGoals(); 
+    }
+
+    function saveGoal() { 
+        const val = document.getElementById('newGoalTitle').value.trim();
+        const date = document.getElementById('newGoalDate').value;
+        const editId = document.getElementById('editGoalId').value;
+        
+        if(val) { 
+            const id = editId ? parseInt(editId) : null;
+            addGoalInternal(val, date, id); 
+            closeModal('goalModal'); 
+        }
+    }
+    
+    function editGoal(id) {
+        const g = appData.goals.find(x => x.id === id);
+        if(g) {
+            document.getElementById('modalTitle').innerText = "Edit Backlog Task";
+            document.getElementById('editGoalId').value = g.id;
+            document.getElementById('newGoalTitle').value = g.title;
+            document.getElementById('newGoalDate').value = g.deadline || '';
+            document.getElementById('goalModal').style.display = 'flex';
+        }
+    }
+
+    function toggleGoal(id) { const g = appData.goals.find(x => x.id === id); if(g) { g.done = !g.done; save(); renderGoals(); }}
+    function deleteGoal(id) { if(confirm("Delete this task?")) { appData.goals = appData.goals.filter(x => x.id !== id); save(); renderGoals(); }}
+
+    /* --- MODALS & CONFIG --- */
+    function openConfigModal() { document.getElementById('confEventName').value = appData.config.eventName; document.getElementById('confEventDate').value = appData.config.eventDate; document.getElementById('configModal').style.display = 'flex'; }
+    function saveConfig() { const name = document.getElementById('confEventName').value.trim(); const date = document.getElementById('confEventDate').value; if(name && date) { appData.config.eventName = name; appData.config.eventDate = date; save(); renderDashboard(); closeModal('configModal'); }}
+    function openScheduleModal() { document.getElementById('editDaySelect').value = new Date().getDay(); loadDaySchedule(); document.getElementById('scheduleModal').style.display = 'flex'; }
+    function loadDaySchedule() {
+        const dayIdx = document.getElementById('editDaySelect').value;
+        const slots = appData.schedule[dayIdx].slots;
+        document.getElementById('slot1Sub').value = slots[0]?.sub || ''; document.getElementById('slot1Task').value = slots[0]?.task || '';
+        document.getElementById('slot2Sub').value = slots[1]?.sub || ''; document.getElementById('slot2Task').value = slots[1]?.task || '';
+        document.getElementById('slot3Sub').value = slots[2]?.sub || ''; document.getElementById('slot3Task').value = slots[2]?.task || '';
+    }
+    function saveSchedule() {
+        const dayIdx = document.getElementById('editDaySelect').value;
+        const newSlots = [
+            { time: "Morning", sub: document.getElementById('slot1Sub').value, task: document.getElementById('slot1Task').value },
+            { time: "Free Time", sub: document.getElementById('slot2Sub').value, task: document.getElementById('slot2Task').value },
+            { time: "Night", sub: document.getElementById('slot3Sub').value, task: document.getElementById('slot3Task').value }
+        ];
+        appData.schedule[dayIdx].slots = newSlots; save(); renderRoutine(); closeModal('scheduleModal');
+    }
+
+    function openGoalModal() { 
+        document.getElementById('modalTitle').innerText = "Add Backlog Task";
+        document.getElementById('editGoalId').value = ""; // Clear edit ID
+        document.getElementById('newGoalTitle').value = "";
+        document.getElementById('newGoalDate').value = "";
+        document.getElementById('goalModal').style.display = 'flex'; 
+        document.getElementById('newGoalTitle').focus(); 
+    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    window.onclick = function(e) { if (e.target.classList.contains('modal-wrap')) e.target.style.display = 'none'; }
+
+    init();
+</script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(registration => {
+          console.log('Service Worker registered successfully:', registration.scope);
+        })
+        .catch(error => {
+          console.log('Service Worker registration failed:', error);
+        });
+    });
+  }
+    </script>
+</body>
+</html>

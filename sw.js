@@ -1,6 +1,6 @@
 // --- START OF FILE sw.js ---
 
-const VERSION = '1.0.4'; // Version matches your app version
+const VERSION = '1.0.7'; // Version matches your app version
 const APP_PREFIX = 'stdy-os'; // Unique prefix for this app's caches
 const CACHE_NAME = `${APP_PREFIX}-v${VERSION}`;
 
